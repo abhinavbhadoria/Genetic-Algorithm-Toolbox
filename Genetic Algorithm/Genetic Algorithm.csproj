@@ -73,16 +73,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Analysis.cs">
+    <Compile Include="Common\Analysis.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Analysis.Designer.cs">
+    <Compile Include="Common\Analysis.Designer.cs">
       <DependentUpon>Analysis.cs</DependentUpon>
     </Compile>
-    <Compile Include="MainScreen.cs">
+    <Compile Include="Common\MainScreen.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="MainScreen.Designer.cs">
+    <Compile Include="Common\MainScreen.Designer.cs">
       <DependentUpon>MainScreen.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
@@ -93,22 +93,40 @@
     <Compile Include="Scripts\Mutation.cs" />
     <Compile Include="Scripts\Selection.cs" />
     <Compile Include="Scripts\Utility.cs" />
-    <Compile Include="TableAndGraph.cs">
+    <Compile Include="FunctionMaximize\TableAndGraph.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="TableAndGraph.Designer.cs">
+    <Compile Include="FunctionMaximize\TableAndGraph.Designer.cs">
       <DependentUpon>TableAndGraph.cs</DependentUpon>
     </Compile>
-    <Compile Include="UserInput.cs">
+    <Compile Include="TSP\TSPGraphInput.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UserInput.Designer.cs">
+    <Compile Include="TSP\TSPGraphInput.Designer.cs">
+      <DependentUpon>TSPGraphInput.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TSP\TSPInput.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TSP\TSPInput.Designer.cs">
+      <DependentUpon>TSPInput.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TSP\TSPTableAndGraph.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TSP\TSPTableAndGraph.Designer.cs">
+      <DependentUpon>TSPTableAndGraph.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FunctionMaximize\UserInput.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FunctionMaximize\UserInput.Designer.cs">
       <DependentUpon>UserInput.cs</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="Analysis.resx">
+    <EmbeddedResource Include="Common\Analysis.resx">
       <DependentUpon>Analysis.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="MainScreen.resx">
+    <EmbeddedResource Include="Common\MainScreen.resx">
       <DependentUpon>MainScreen.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -120,10 +138,19 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="TableAndGraph.resx">
+    <EmbeddedResource Include="FunctionMaximize\TableAndGraph.resx">
       <DependentUpon>TableAndGraph.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UserInput.resx">
+    <EmbeddedResource Include="TSP\TSPGraphInput.resx">
+      <DependentUpon>TSPGraphInput.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TSP\TSPInput.resx">
+      <DependentUpon>TSPInput.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TSP\TSPTableAndGraph.resx">
+      <DependentUpon>TSPTableAndGraph.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FunctionMaximize\UserInput.resx">
       <DependentUpon>UserInput.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Genetic Algorithm_TemporaryKey.pfx" />

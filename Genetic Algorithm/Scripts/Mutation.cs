@@ -20,18 +20,35 @@ namespace Genetic_Algorithm
         public static DataTable InitializeTable()
         {
             DataTable table = new DataTable();
-            table.Columns.Add("StringNo", typeof(string));
-            table.Columns.Add("OffspringBefore", typeof(string));
-            table.Columns.Add("MutationChromosome", typeof(string));
-            table.Columns.Add("OffspringAfter", typeof(string));
-            table.Columns.Add("x-value", typeof(string));
-            table.Columns.Add("Fitness", typeof(string));
 
-            for (int i = 0; i < 4; i++)
-                table.Rows.Add(string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty);
+            if (DataStorage.isTSP)
+            {
+                table.Columns.Add("StringNo", typeof(string));
+                table.Columns.Add("OffspringBefore", typeof(string));
+                table.Columns.Add("MutationChromosome", typeof(string));
+                table.Columns.Add("OffspringAfter", typeof(string));
+                table.Columns.Add("Fitness", typeof(string));
+                for (int i = 0; i < 4; i++)
+                    table.Rows.Add(string.Empty, string.Empty, string.Empty, string.Empty, string.Empty);
+            }
+            else
+            {
+                table.Columns.Add("StringNo", typeof(string));
+                table.Columns.Add("OffspringBefore", typeof(string));
+                table.Columns.Add("MutationChromosome", typeof(string));
+                table.Columns.Add("OffspringAfter", typeof(string));
+                table.Columns.Add("x-value", typeof(string));
+                table.Columns.Add("Fitness", typeof(string));
+                for (int i = 0; i < 4; i++)
+                    table.Rows.Add(string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty);
+            }
 
             return table;
         }
+
+        // ----------------------------------------------------------------------------------------------------
+        //                                      Function Maximize related functions
+        // ----------------------------------------------------------------------------------------------------
 
         public static int[,] DoMutation(int[,] initialChromosome, ref DataTable mainTable, ref int[] maxima)
         {
@@ -50,7 +67,7 @@ namespace Genetic_Algorithm
                 }
             }
 
-            PerformMutationrRate(DataStorage.mutationRate, ref offspringBefore, ref offspringAfter, ref mutationChromosome);
+            PerformMutationrRateFunctionMaximize(DataStorage.mutationRate, ref offspringBefore, ref offspringAfter, ref mutationChromosome);
 
             for (int gen = 0; gen < 4; gen++)
             {
@@ -69,18 +86,7 @@ namespace Genetic_Algorithm
 
             return xVal;
         }
-
-        public static void UpdateTableValue(ref DataTable mainTable)
-        {
-            // Making sure the table is cleared before adding new values
-            mainTable.Clear();
-
-            int gen = TableAndGraph.genIndex;
-            for (int i = 0; i < DataStorage.initialPopCount; i++)
-                mainTable.Rows.Add((i + 1).ToString(), offspringBefore[gen, i], mutationChromosome[gen, i], offspringAfter[gen, i], xVal[gen, i].ToString(), fitnessVal[gen, i].ToString());
-        }
-
-        private static void PerformMutationSinglePoint(string str, out string offspring, out string mutationChromosome)
+        private static void OnePointMutationFunctionMaximize(string str, out string offspring, out string mutationChromosome)
         {
             int[] arr1 = new int[] { 1, 2, 4, 8, 16 };
             char[] ch = new char[5];
@@ -103,8 +109,7 @@ namespace Genetic_Algorithm
             offspring = new String(array1);
             mutationChromosome = Utility.DecToBin(number);
         }
-
-        private static void PerformMutationMultiplePoint(string str, out string offspring, out string mutationChromosome)
+        private static void MultiPointMutationFunctionMaximize(string str, out string offspring, out string mutationChromosome)
         {
             char[] ch = new char[5];
 
@@ -127,8 +132,7 @@ namespace Genetic_Algorithm
             offspring = new String(array1);
             mutationChromosome = Utility.DecToBin(number);
         }
-
-        public static void PerformMutationrRate(int rate, ref string[,] inputchromosome, ref string[,] outputchromosome, ref string[,] mutChormosome)
+        public static void PerformMutationrRateFunctionMaximize(int rate, ref string[,] inputchromosome, ref string[,] outputchromosome, ref string[,] mutChormosome)
         {
             for (int gen = 0; gen < 4; gen++)
             {
@@ -153,14 +157,144 @@ namespace Genetic_Algorithm
                 for (int i = 0; i < selectedvalues; i++)
                 {
                     if (DataStorage.mutationType == DataStorage.mutationSchemes[0])
-                        PerformMutationSinglePoint(inputchromosome[gen, i], out outputchromosome[gen, i], out  mutChormosome[gen, i]);
+                        OnePointMutationFunctionMaximize(inputchromosome[gen, i], out outputchromosome[gen, i], out  mutChormosome[gen, i]);
                     else
-                        PerformMutationMultiplePoint(inputchromosome[gen, i], out outputchromosome[gen, i], out  mutChormosome[gen, i]);
+                        MultiPointMutationFunctionMaximize(inputchromosome[gen, i], out outputchromosome[gen, i], out  mutChormosome[gen, i]);
                 }
 
                 for (int i = selectedvalues; i < DataStorage.initialPopCount; i++)
                     mutChormosome[gen, i] = "Nil";
             }
         }
+
+        // ----------------------------------------------------------------------------------------------------
+        //                                      TSP related functions
+        // ----------------------------------------------------------------------------------------------------
+
+        public static string[,] DoMutation(string[,] initialPath, ref DataTable mainTable, ref int[] minima, ref string[] minimaPath)
+        {
+            offspringBefore = new string[4, DataStorage.initialPopCount];
+            mutationChromosome = new string[4, DataStorage.initialPopCount];
+            offspringAfter = new string[4, DataStorage.initialPopCount];
+            fitnessVal = new int[4, DataStorage.initialPopCount];
+
+            offspringBefore = initialPath;
+
+            PerformMutationrRateTSP(DataStorage.mutationRate, ref offspringBefore, ref offspringAfter, ref mutationChromosome);
+
+            for (int gen = 0; gen < 4; gen++)
+            {
+                for (int i = 0; i < DataStorage.initialPopCount; i++)
+                    fitnessVal[gen, i] = Utility.PathFitnessCalculator(offspringAfter[gen, i], DataStorage.distanceGraph);
+            }
+
+            for (int gen = 0; gen < 4; gen++)
+            {
+                minima[gen] = Utility.GetMin(fitnessVal, gen);
+                for (int i = 0; i < DataStorage.initialPopCount; i++)
+                {
+                    if (fitnessVal[gen, i] == minima[gen])
+                        minimaPath[gen] = offspringAfter[gen, i];
+                }
+            }
+
+            // Updating mutation table
+            UpdateTableValue(ref mainTable);
+
+            return offspringAfter;
+        }
+        public static string NPOintMutationTSP(string input, out string offspring, out string mutationChromosome, int CityCount, int singleOrMultiple)
+        {
+            int[] mutated = new int[CityCount];
+            string ans = string.Empty;
+            int multitime = 1;
+            if (singleOrMultiple == 1)
+            {
+                multitime = rnd.Next(CityCount);
+                while (multitime == 1)
+                    multitime = rnd.Next(CityCount);
+            }
+
+            for (int k = 0; k < multitime; k++)
+            {
+                int temp1 = rnd.Next(CityCount);
+                int temp2 = rnd.Next(CityCount);
+                while (temp1 == temp2)
+                    temp2 = rnd.Next(CityCount);
+                mutated[temp1]++;
+                mutated[temp2]++;
+                char[] characters = input.ToCharArray();
+                char ch = characters[temp1];
+                characters[temp1] = characters[temp2];
+                characters[temp2] = ch;
+                input = new string(characters);
+            }
+
+            offspring = input;
+            mutationChromosome = string.Empty;
+            for (int i = 0; i < CityCount; i++)
+                mutationChromosome += mutated[i].ToString();
+
+            return mutationChromosome;
+        }
+        public static void PerformMutationrRateTSP(int rate, ref string[,] inputchromosome, ref string[,] outputchromosome, ref string[,] mutChormosome)
+        {
+            int length = inputchromosome.GetLength(1);
+            int selectedvalues = (int)((rate / 100f) * length);
+            if ((selectedvalues % 2) == 1)
+                selectedvalues--;
+
+            for (int gen = 0; gen < 4; gen++)
+            {
+                int[] tempFitness = new int[length];
+                string[] tempChromosome = new string[length];
+                // Calculating fitnessValue of chromosomes
+                for (int i = 0; i < length; i++)
+                {
+                    tempFitness[i] = Utility.PathFitnessCalculator(inputchromosome[gen, i], DataStorage.distanceGraph);
+                    tempChromosome[i] = inputchromosome[gen, i];
+                }
+                // Sorting chromosomes based on their fitness level and also keeping track of thier chromosomes
+                Utility.SortChromosomes(ref tempFitness, ref tempChromosome);
+                // Initially, inputChomosomes and outputChromosomes are same and sorted based in thier fitness value
+                for (int i = 0; i < length; i++)
+                    inputchromosome[gen, i] = outputchromosome[gen, i] = tempChromosome[i];
+
+                for (int i = 0; i < selectedvalues; i++)
+                {
+                    if (DataStorage.mutationType == DataStorage.mutationSchemes[0])
+                        NPOintMutationTSP(inputchromosome[gen, i], out outputchromosome[gen, i], out  mutChormosome[gen, i], DataStorage.cityCount, 0);
+                    else
+                        NPOintMutationTSP(inputchromosome[gen, i], out outputchromosome[gen, i], out  mutChormosome[gen, i], DataStorage.cityCount, 1);
+                }
+
+                for (int i = selectedvalues; i < DataStorage.initialPopCount; i++)
+                    mutChormosome[gen, i] = "Nil";
+            }
+        }
+
+        // ----------------------------------------------------------------------------------------------------
+        //                                      Common to both modules
+        // ----------------------------------------------------------------------------------------------------
+
+        public static void UpdateTableValue(ref DataTable mainTable)
+        {
+            // Making sure the table is cleared before adding new values
+            mainTable.Clear();
+
+            int gen = TSPTableAndGraph.genIndex;
+
+            if (DataStorage.isTSP)
+            {
+                for (int i = 0; i < DataStorage.initialPopCount; i++)
+                    mainTable.Rows.Add((i + 1).ToString(), offspringBefore[gen, i], mutationChromosome[gen, i], offspringAfter[gen, i], fitnessVal[gen, i].ToString());
+            }
+            else
+            {
+                for (int i = 0; i < DataStorage.initialPopCount; i++)
+                    mainTable.Rows.Add((i + 1).ToString(), offspringBefore[gen, i], mutationChromosome[gen, i], offspringAfter[gen, i], xVal[gen, i].ToString(), fitnessVal[gen, i].ToString());
+            }
+        }
     }
 }
+

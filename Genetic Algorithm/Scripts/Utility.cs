@@ -8,9 +8,11 @@ namespace Genetic_Algorithm
 {
     class Utility
     {
+        static Random rnd = new Random();
+
         public static string DecToBin(int number)
         {
-                       int i = 0, k = 0, d, temp = number;
+            int i = 0, k = 0, d, temp = number;
             int[] a;
             char[] ch;
             int l = CountMaxBits(DataStorage.UpperBound);
@@ -63,11 +65,66 @@ namespace Genetic_Algorithm
             return l;
         }
 
+        public static string GetRandomPath(int CityCount)
+        {
+            int[] flag = new int[CityCount];
+            char[] ch = new char[CityCount];
+            int cnt = CityCount, i = 0;
+            do
+            {
+                int temp = rnd.Next(CityCount);
+                if (flag[temp] == 0)
+                {
+                    flag[temp] = 1;
+                    ch[i++] = (char)(65 + temp);
+                    cnt--;
+                }
+            } while (cnt > 0);
+
+           string str = new string(ch);
+            return str;
+        }
+
+        public static int PathFitnessCalculator(string input, int[,] matrix)
+        {
+            int a, b, fitness = 0, l = input.Length;
+            for (int i = 1; i < l; i++)
+            {
+                a = (int)(input[i - 1] - 'A');
+                b = (int)(input[i] - 'A');
+                fitness += matrix[a, b];
+            }
+            a = (int)(input[l - 1] - 'A');
+            b = (int)(input[0] - 'A');
+            fitness += matrix[a, b];
+            return fitness;
+        }
+
+        public static void SortChromosomes(ref int[] fitnessValue, ref string[] chromosomes)
+        {
+            for (int i = 0; i < fitnessValue.Length; i++)
+            {
+                for (int j = i + 1; j < fitnessValue.Length; j++)
+                {
+                    if (fitnessValue[i] < fitnessValue[j])
+                    {
+                        int tempFitness = fitnessValue[i];
+                        fitnessValue[i] = fitnessValue[j];
+                        fitnessValue[j] = tempFitness;
+
+                        string tempChromosome = chromosomes[i];
+                        chromosomes[i] = chromosomes[j];
+                        chromosomes[j] = tempChromosome;
+                    }
+                }
+            }
+        }
+
         public static int GetSum(int[,] arr, int rowIndex)
         {
             int sum = 0;
             for (int i = 0; i < arr.GetLength(1); i++)
-                sum += arr[rowIndex,i];
+                sum += arr[rowIndex, i];
             return sum;
         }
 
@@ -108,7 +165,23 @@ namespace Genetic_Algorithm
             double max = 0;
             for (int i = 0; i < arr.GetLength(1); i++)
                 max = Math.Max(max, arr[rowIndex, i]);
-            return Math.Round( max, 2);
+            return Math.Round(max, 2);
+        }
+
+        public static int GetMin(int[,] arr, int rowIndex)
+        {
+            int min = int.MaxValue;
+            for (int i = 0; i < arr.GetLength(1); i++)
+                min = Math.Min(min, arr[rowIndex, i]);
+            return min;
+        }
+
+        public static double GetMin(double[,] arr, int rowIndex)
+        {
+            double min = double.MaxValue;
+            for (int i = 0; i < arr.GetLength(1); i++)
+                min = Math.Min(min, arr[rowIndex, i]);
+            return Math.Round(min, 2);
         }
     }
 }

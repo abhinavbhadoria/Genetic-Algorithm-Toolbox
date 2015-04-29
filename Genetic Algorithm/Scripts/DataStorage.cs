@@ -31,20 +31,34 @@ namespace Genetic_Algorithm
             "Multiple bit are flipped randomly"
         };
 
+        // Function maximize related variables
         public static string fitnessFunction;
         public static int numOfVar;
         public static int lowerBound, UpperBound;
-        public static int initialPopCount;
+
+        // TSP related variables
+        public static int cityCount;
+        public static int[,] distanceGraph;
+
+        // Common to both problems variables
         public static int generationCount;
+        public static int initialPopCount;
+
+        // GA related variables
         public static string selectionType;
         public static string crossoverType;
         public static string mutationType;
         public static int crossoverRate;
         public static int mutationRate;
 
+        public static bool isTSP;
+
+        // Polymorphic version for function maximize form
         public static void SaveData(string fitnessFunc, string varCount, string lowerLimit, string upperLimit, string popCount, string genCount, string selcType, string crossType, string mutType, int crossRate, int mutRate)
         {
-            fitnessFunction = fitnessFunc;
+            isTSP = false;
+
+                        fitnessFunction = fitnessFunc;
 
             int temp = 0;
             numOfVar = (int.TryParse(varCount, out temp)) ? temp : 1;
@@ -60,6 +74,28 @@ namespace Genetic_Algorithm
 
             temp = 0;
             generationCount = (int.TryParse(genCount, out temp)) ? temp : 10;
+
+            selectionType = selcType;
+            crossoverType = crossType;
+            mutationType = mutType;
+
+            crossoverRate = crossRate;
+            mutationRate = mutRate;
+        }
+
+        // POlymorphic version for TSP problem
+        public static void SaveData(string numOfCities, string popCount ,string genCount, string selcType, string crossType, string mutType, int crossRate, int mutRate)
+        {
+            isTSP = true;
+
+            int temp = 0;
+            cityCount = (int.TryParse(numOfCities, out temp)) ? temp : 5;
+
+            temp = 0;
+            initialPopCount = (int.TryParse(popCount, out  temp) ? temp : 4);
+
+            temp = 0;
+            generationCount = (int.TryParse(genCount, out  temp) ? temp : 10);
 
             selectionType = selcType;
             crossoverType = crossType;
